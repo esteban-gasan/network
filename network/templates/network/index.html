@@ -3,4 +3,6 @@
 {% block body %}
     <a class="btn btn-primary" href="{% url 'new-post' %}" role="button">New Post</a>
     <h1>All Posts</h1>
+
+    {% include 'network/posts.html' %}
 {% endblock %}

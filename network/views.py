@@ -1,16 +1,23 @@
+import json
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.http import (HttpRequest, HttpResponse, HttpResponseRedirect,
+                         JsonResponse)
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from .forms import PostForm
-from .models import User
+from .models import Post, User
 
 
 def index(request):
-    return render(request, "network/index.html")
+    return render(request, "network/index.html", {
+        "posts": Post.objects.all()
+    })
+
 
 @login_required
 def new_post(request: HttpRequest):
@@ -28,6 +35,43 @@ def new_post(request: HttpRequest):
     new_post.save()
 
     return redirect("index")
+
+
+def profile(request: HttpRequest, pk: int):
+    user = get_object_or_404(User, id=pk)
+    return render(request, "network/profile.html", {"user_viewed": user})
+
+
+@csrf_exempt
+@login_required
+def follow(request: HttpRequest, user_id: int):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    if request.user.id == user_id:
+        return JsonResponse({"error": "You can only follow other users."}, status=400)
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return JsonResponse({
+            "error": f"User with id {user_id} does not exist."
+        }, status=400)
+
+    if request.user.following.contains(user):
+        request.user.following.remove(user)
+        msg = "Unfollowed"
+    else:
+        request.user.following.add(user)
+        msg = "Following"
+
+    return JsonResponse({"message": f"{msg} {user.username}"}, status=201)
+
+
+@login_required
+def following(request: HttpRequest):
+    return render(request, "network/following.html", {
+        "posts": Post.objects.filter(author_id__in=request.user.following.all())
+    })
 
 
 def login_view(request):

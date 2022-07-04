@@ -1,0 +1,40 @@
+{% extends 'network/layout.html' %}
+{% load static %}
+
+{% block scripts %}
+  <script defer src="{% static 'network/follow.js' %}"></script>
+{% endblock scripts %}
+
+{% block body %}
+  <h1 data-user-id="{{ user_viewed.id }}">{{ user_viewed }}</h1>
+
+  {% if user_viewed != user and user.is_authenticated %}
+    {% if user in user_viewed.followers.all %}
+      <button id="follow-btn" type="button" class="btn btn-outline-secondary">Unfollow</button>
+    {% else %}
+      <button id="follow-btn" type="button" class="btn btn-secondary">Follow</button>
+    {% endif %}
+  {% endif %}
+
+  <div>
+    <span>{{ user_viewed.following.count }}</span>
+    <span>Following</span>
+  </div>
+  <div>
+    <span>{{ user_viewed.followers.count }}</span>
+    <span>Followers</span>
+  </div>
+
+
+  <h2>Posts</h2>
+  {% for post in user_viewed.post_set.all %}
+    {{ post.text }}
+      <div>{{ post.text }}</div>
+      <div>{{ post.timestamp }}</div>
+      <div>{{ post.likes.count }}</div>
+      <button type="button" class="btn btn-danger">Like</button>
+      <hr>
+  {% empty %}
+    This user hasn't posted anything yet.
+  {% endfor %}
+{% endblock body %}

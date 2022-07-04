@@ -1,0 +1,21 @@
+{% for post in posts %}
+  <article>
+    <div>
+      <a href="{% url 'profile' post.author.id %}" class="link-primary">{{ post.author }}</a>
+    </div>
+    <div>{{ post.text }}</div>
+    <div>{{ post.timestamp }}</div>
+    <div>{{ post.likes.count }}</div>
+    {% if user == post.author %}
+      <button type="button" class="btn btn-outline-success">Edit</button>
+    {% endif %}
+    {% if user in post.likes.all %}
+      <button type="button" class="btn btn-danger">Like</button>
+    {% else %}
+    <button type="button" class="btn btn-danger">Like</button>
+    {% endif %}
+    <hr>
+  </article>
+{% empty %}
+  There are no posts.
+{% endfor %}
