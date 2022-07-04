@@ -74,6 +74,30 @@ def following(request: HttpRequest):
     })
 
 
+@csrf_exempt
+@login_required
+def like(request: HttpRequest, post_id: int):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    try:
+        post = Post.objects.get(id=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({
+            "error": f"Post with id {post_id} does not exist."
+        }, status=400)
+
+    user = request.user
+    if post.likes.contains(user):
+        post.likes.remove(user)
+        msg = "Unliked"
+    else:
+        post.likes.add(user)
+        msg = "Liked"
+
+    return JsonResponse({"message": f"{msg} post {post.id}"}, status=201)
+
+
 def login_view(request):
     if request.method == "POST":
 

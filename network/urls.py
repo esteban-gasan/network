@@ -13,4 +13,5 @@ urlpatterns = [
     path("register/", views.register, name="register"),
 
     path("api/follow/<int:user_id>/", views.follow, name="follow"),
+    path("api/like/<int:post_id>/", views.like, name="like"),
 ]

@@ -1,18 +1,20 @@
 {% for post in posts %}
-  <article>
+  <article data-post-id="{{ post.id }}">
     <div>
       <a href="{% url 'profile' post.author.id %}" class="link-primary">{{ post.author }}</a>
     </div>
     <div>{{ post.text }}</div>
     <div>{{ post.timestamp }}</div>
-    <div>{{ post.likes.count }}</div>
+    <div class="like-count">{{ post.likes.count }}</div>
+
+    {% if user in post.likes.all %}
+      <button type="button" class="like-btn btn btn-outline-danger">Unlike</button>
+    {% else %}
+      <button type="button" class="like-btn btn btn-danger">Like</button>
+    {% endif %}
+
     {% if user == post.author %}
       <button type="button" class="btn btn-outline-success">Edit</button>
-    {% endif %}
-    {% if user in post.likes.all %}
-      <button type="button" class="btn btn-danger">Like</button>
-    {% else %}
-    <button type="button" class="btn btn-danger">Like</button>
     {% endif %}
     <hr>
   </article>
