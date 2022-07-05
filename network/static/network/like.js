@@ -1,14 +1,16 @@
 const likeBtns = document.querySelectorAll(".like-btn");
-const classes = { Like: "btn-danger", Unlike: "btn-outline-danger" };
+const likeClasses = { like: "btn-danger", unlike: "btn-outline-secondary" };
 
 likeBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
-    btn.textContent = btn.textContent === "Like" ? "Unlike" : "Like";
-    btn.classList.replace(btn.classList[2], classes[btn.textContent]);
-    const likeCountDiv = btn.previousElementSibling;
+    newClass = btn.classList.contains(likeClasses["like"])
+      ? likeClasses["unlike"]
+      : likeClasses["like"];
+    btn.classList.replace(btn.classList[0], newClass);
+    const likeCountDiv = btn.firstElementChild;
     counter = likeCountDiv.textContent;
     likeCountDiv.textContent = parseInt(
-      btn.textContent === "Unlike" ? counter + 1 : counter - 1
+      newClass === likeClasses["like"] ? counter + 1 : counter - 1
     );
 
     const postId = btn.closest("article").dataset.postId;

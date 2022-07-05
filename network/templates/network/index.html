@@ -1,8 +1,14 @@
 {% extends "network/layout.html" %}
+{% load static %}
+
+{% block scripts %}
+    <script defer src="{% static 'network/edit.js' %}"></script>
+{% endblock scripts %}
 
 {% block body %}
-    <a class="btn btn-primary" href="{% url 'new-post' %}" role="button">New Post</a>
     <h1>All Posts</h1>
+
+    <a class="btn btn-primary my-3" href="{% url 'new-post' %}" role="button">New Post</a>
 
     {% include 'network/posts.html' %}
 {% endblock %}

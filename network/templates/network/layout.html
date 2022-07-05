@@ -45,9 +45,18 @@
             </div>
           </nav>
 
-        <div class="body">
+        <div class="body container py-4">
             {% block body %}
             {% endblock %}
         </div>
+
+        <template>
+            <form action="" class="" method="post">
+                <textarea name="edit-post" id="" cols="30" rows="6" class="form-control mb-3" required></textarea>
+                <button type="button" class="cancel-btn btn btn-outline-secondary">Cancel</button>
+                <button class="save-btn btn btn-primary ms-4">Save</button>
+            </form>
+        </template>
+
     </body>
 </html>

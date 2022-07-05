@@ -98,6 +98,34 @@ def like(request: HttpRequest, post_id: int):
     return JsonResponse({"message": f"{msg} post {post.id}"}, status=201)
 
 
+@csrf_exempt
+@login_required
+def edit(request: HttpRequest, post_id: int):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    try:
+        post = Post.objects.get(id=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({
+            "error": f"Post with id {post_id} does not exist."
+        }, status=400)
+
+    if request.user != post.author:
+        return JsonResponse(
+            {"error": "You can only edit your own posts."}, status=400
+        )
+
+    if (text := json.loads(request.body).get("text")) is None:
+        return JsonResponse({"error": "Text is empty!"}, status=400)
+
+    post.text = text
+    post.save()
+    msg = f"Edited post with id {post.id}"
+
+    return JsonResponse({"message": msg}, status=201)
+
+
 def login_view(request):
     if request.method == "POST":
 

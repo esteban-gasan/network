@@ -3,6 +3,9 @@
 
 {% block scripts %}
   <script defer src="{% static 'network/follow.js' %}"></script>
+  {% if user == user_viewed and user.is_authenticated %}
+    <script defer src="{% static 'network/edit.js' %}"></script>
+  {% endif %}
 {% endblock scripts %}
 
 {% block body %}
@@ -26,15 +29,9 @@
   </div>
 
 
-  <h2>Posts</h2>
-  {% for post in user_viewed.post_set.all %}
-    {{ post.text }}
-      <div>{{ post.text }}</div>
-      <div>{{ post.timestamp }}</div>
-      <div>{{ post.likes.count }}</div>
-      <button type="button" class="btn btn-danger">Like</button>
-      <hr>
-  {% empty %}
+  <h3>Posts</h3>
+  {% include 'network/posts.html' with posts=user_viewed.post_set.all %}
+  {% if not user_viewed.post_set.all %}
     This user hasn't posted anything yet.
-  {% endfor %}
+  {% endif %}
 {% endblock body %}
