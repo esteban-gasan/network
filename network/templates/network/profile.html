@@ -1,6 +1,8 @@
 {% extends 'network/layout.html' %}
 {% load static %}
 
+{% block title %}{{ user_viewed }}{% endblock title %}
+
 {% block scripts %}
   <script defer src="{% static 'network/follow.js' %}"></script>
   {% if user == user_viewed and user.is_authenticated %}
@@ -19,19 +21,18 @@
     {% endif %}
   {% endif %}
 
-  <div>
-    <span>{{ user_viewed.following.count }}</span>
-    <span>Following</span>
-  </div>
-  <div>
-    <span>{{ user_viewed.followers.count }}</span>
-    <span>Followers</span>
+  <div class="d-flex gap-4 mb-5">
+    <div>
+      <span>{{ user_viewed.following.count }}</span>
+      <span>Following</span>
+    </div>
+    <div>
+      <span>{{ user_viewed.followers.count }}</span>
+      <span>Followers</span>
+    </div>
   </div>
 
 
   <h3>Posts</h3>
-  {% include 'network/posts.html' with posts=user_viewed.post_set.all %}
-  {% if not user_viewed.post_set.all %}
-    This user hasn't posted anything yet.
-  {% endif %}
+  {% include 'network/posts.html' %}
 {% endblock body %}

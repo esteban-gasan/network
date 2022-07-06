@@ -2,9 +2,9 @@ import json
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db import IntegrityError
-from django.http import (HttpRequest, HttpResponse, HttpResponseRedirect,
-                         JsonResponse)
+from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -13,9 +13,17 @@ from .forms import PostForm
 from .models import Post, User
 
 
+def paginate(request: HttpRequest, posts):
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    return paginator.get_page(page_number)
+
+
 def index(request):
+    posts = Post.objects.all()
+    page_obj = paginate(request, posts)
     return render(request, "network/index.html", {
-        "posts": Post.objects.all()
+        "posts": page_obj
     })
 
 
@@ -38,8 +46,13 @@ def new_post(request: HttpRequest):
 
 
 def profile(request: HttpRequest, pk: int):
-    user = get_object_or_404(User, id=pk)
-    return render(request, "network/profile.html", {"user_viewed": user})
+    user_viewed = get_object_or_404(User, id=pk)
+    posts = user_viewed.post_set.all()
+    page_obj = paginate(request, posts)
+    return render(request, "network/profile.html", {
+        "user_viewed": user_viewed,
+        "posts": page_obj
+    })
 
 
 @csrf_exempt
@@ -69,8 +82,10 @@ def follow(request: HttpRequest, user_id: int):
 
 @login_required
 def following(request: HttpRequest):
+    posts = Post.objects.filter(author_id__in=request.user.following.all())
+    page_obj = paginate(request, posts)
     return render(request, "network/following.html", {
-        "posts": Post.objects.filter(author_id__in=request.user.following.all())
+        "posts": page_obj
     })
 
 

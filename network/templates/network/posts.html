@@ -31,3 +31,37 @@
 {% empty %}
   There are no posts.
 {% endfor %}
+
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+    {% if posts.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page=1">
+        &laquo; First
+      </a>
+    </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ posts.previous_page_number }}">
+          {{ posts.previous_page_number }}
+        </a>
+      </li>
+    {% endif %}
+
+    <li class="page-item active" aria-current="page">
+      <span class="page-link">{{ posts.number }}</span>
+    </li>
+
+    {% if posts.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ posts.next_page_number }}">
+          {{ posts.next_page_number }}
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ posts.paginator.num_pages }}">
+          Last &raquo;
+        </a>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
