@@ -8,7 +8,7 @@ likeBtns.forEach((btn) => {
       : likeClasses["like"];
     btn.classList.replace(btn.classList[0], newClass);
     const likeCountDiv = btn.firstElementChild;
-    counter = likeCountDiv.textContent;
+    counter = parseInt(likeCountDiv.textContent);
     likeCountDiv.textContent = parseInt(
       newClass === likeClasses["like"] ? counter + 1 : counter - 1
     );
